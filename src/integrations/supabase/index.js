@@ -23,7 +23,7 @@ const fromSupabase = async (query) => {
 
 | name       | type    | format | required |
 |------------|---------|--------|----------|
-| id         | int8    | number | true     |
+| id         | integer | number | true     |
 | name       | text    | string | true     |
 | description| text    | string | false    |
 | price      | numeric | number | true     |
@@ -33,10 +33,10 @@ const fromSupabase = async (query) => {
 
 | name       | type    | format | required |
 |------------|---------|--------|----------|
-| id         | int8    | number | true     |
+| id         | integer | number | true     |
 | user_id    | uuid    | string | true     |
-| product_id | int8    | number | true     |
-| quantity   | int4    | number | true     |
+| product_id | integer | number | true     |
+| quantity   | integer | number | true     |
 
 */
 
@@ -47,7 +47,7 @@ export const useProducts = () => useQuery({
 });
 
 export const useProduct = (id) => useQuery({
-    queryKey: ['products', id],
+    queryKey: ['product', id],
     queryFn: () => fromSupabase(supabase.from('products').select('*').eq('id', id).single()),
 });
 
@@ -82,37 +82,37 @@ export const useDeleteProduct = () => {
 };
 
 // Hooks for shopping_cart table
-export const useShoppingCarts = () => useQuery({
+export const useShoppingCart = () => useQuery({
     queryKey: ['shopping_cart'],
     queryFn: () => fromSupabase(supabase.from('shopping_cart').select('*')),
 });
 
-export const useShoppingCart = (id) => useQuery({
-    queryKey: ['shopping_cart', id],
+export const useShoppingCartItem = (id) => useQuery({
+    queryKey: ['shopping_cart_item', id],
     queryFn: () => fromSupabase(supabase.from('shopping_cart').select('*').eq('id', id).single()),
 });
 
-export const useAddShoppingCart = () => {
+export const useAddShoppingCartItem = () => {
     const queryClient = useQueryClient();
     return useMutation({
-        mutationFn: (newShoppingCart) => fromSupabase(supabase.from('shopping_cart').insert([newShoppingCart])),
+        mutationFn: (newItem) => fromSupabase(supabase.from('shopping_cart').insert([newItem])),
         onSuccess: () => {
             queryClient.invalidateQueries('shopping_cart');
         },
     });
 };
 
-export const useUpdateShoppingCart = () => {
+export const useUpdateShoppingCartItem = () => {
     const queryClient = useQueryClient();
     return useMutation({
-        mutationFn: (updatedShoppingCart) => fromSupabase(supabase.from('shopping_cart').update(updatedShoppingCart).eq('id', updatedShoppingCart.id)),
+        mutationFn: (updatedItem) => fromSupabase(supabase.from('shopping_cart').update(updatedItem).eq('id', updatedItem.id)),
         onSuccess: () => {
             queryClient.invalidateQueries('shopping_cart');
         },
     });
 };
 
-export const useDeleteShoppingCart = () => {
+export const useDeleteShoppingCartItem = () => {
     const queryClient = useQueryClient();
     return useMutation({
         mutationFn: (id) => fromSupabase(supabase.from('shopping_cart').delete().eq('id', id)),
